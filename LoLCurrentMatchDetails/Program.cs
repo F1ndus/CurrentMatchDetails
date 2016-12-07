@@ -7,7 +7,7 @@ using System.Management;
 using System.Diagnostics;
 using System.Threading;
 
-namespace ProcessStartEventTest
+namespace LoLCurrentMatchDetails
 {
     static class Program
     {
@@ -20,8 +20,6 @@ namespace ProcessStartEventTest
 
         static void Main(string[] args)
         {
-            // Display the number of command line arguments:
-            System.Console.WriteLine(args.Length);
 
             mgmtWtch = new System.Management.ManagementEventWatcher("Select * From Win32_ProcessStartTrace");
             mgmtWtch.EventArrived += new System.Management.EventArrivedEventHandler(mgmtWtch_EventArrived);
@@ -58,29 +56,6 @@ namespace ProcessStartEventTest
                 }
             }
         }
-
-        private static void startjar()
-        {
-            string jar = @"E:\philipp\Programmieren\GetQueue\build\libs\GetQueue-1.0-SNAPSHOT.jar";
-            string args = "start";
-
-            System.Diagnostics.Process clientProcess = new Process();
-            clientProcess.StartInfo.FileName = "java";
-            clientProcess.StartInfo.Arguments = @"-jar " + jar + " " + args;
-            clientProcess.StartInfo.RedirectStandardOutput = true;
-            clientProcess.StartInfo.RedirectStandardError = true;
-            clientProcess.StartInfo.UseShellExecute = false;
-            clientProcess.StartInfo.CreateNoWindow = true;
-            clientProcess.Start();
-            clientProcess.BeginOutputReadLine();
-            clientProcess.BeginErrorReadLine();
-            clientProcess.OutputDataReceived += new DataReceivedEventHandler((s, es) =>
-            {
-                Console.WriteLine(es.Data);
-            });
-            clientProcess.ErrorDataReceived += new DataReceivedEventHandler((s, es) => { Console.WriteLine(es.Data); });
-        }
-
     }
 }
 

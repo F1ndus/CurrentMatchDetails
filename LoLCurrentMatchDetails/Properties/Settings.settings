@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LoLCurrentMatchDetails.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="API_Key" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4091633c-fe9a-4549-85ed-8fab5089b6a8</Value>
+    </Setting>
+    <Setting Name="SummonerID" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20377190</Value>
+    </Setting>
+    <Setting Name="Setting" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

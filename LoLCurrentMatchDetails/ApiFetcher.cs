@@ -1,30 +1,57 @@
 ﻿using RiotSharp;
-using RiotSharp.CurrentGameEndpoint.Converters;
+using RiotSharp.CurrentGameEndpoint.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using Newtonsoft.Json;
+using LoLCurrentMatchDetails.Properties;
 
-namespace ProcessStartEventTest
+namespace LoLCurrentMatchDetails
 {
 
     using RiotSharp;
-
+    using System.IO;
     class ApiFetcher
     {
-        static int FOZRUK = 20377190;
-        static int BAKER = 73687139;
-        static int SMURF = 59807066;
-        static int WOO = 58717498;
+        // static int CURRENT_SUMMONER = LoLCurrentMatchDetails.Properties.Settings.Default.SummonerID;
+        public static long CURRENT_SUMMONER = 0;
+        static string api_key = null;
+        // The folder for the roaming current user 
 
 
-        static int CURRENT_SUMMONER = FOZRUK;
-        public static RiotApi  api = RiotSharp.RiotApi.GetInstance("4091633c-fe9a-4549-85ed-8fab5089b6a8");
+        static string folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        static string appFolder = Path.Combine(folder, "LoLCurrentMatchDetails");
+        public static RiotApi api = null;
+
+
+        static ApiFetcher() {
+            // Check if folder exists and if not, create it
+            if (!Directory.Exists(appFolder))
+            {
+                Directory.CreateDirectory(appFolder);
+                File.Create(appFolder + "/settings.properties");
+            }
+
+            string[] settings  = File.ReadAllLines(appFolder + "/settings.properties");
+            Array.ForEach<string>(settings, str =>
+            {
+                string[] kv = str.Split('=');
+                if (kv[0].Equals("key"))
+                    api_key = kv[1];
+                else if (kv[0].Equals("summonerid"))
+                    CURRENT_SUMMONER = Convert.ToInt32(kv[1]);
+            });
+              api = RiotSharp.RiotApi.GetInstance(api_key);
+        }
+
+        
 
         public static int getData()
-        {           
+        {
+            Properties.Settings.Default.Save();
             RiotSharp.CurrentGameEndpoint.CurrentGame gameinfo;
             try
             {
@@ -55,8 +82,14 @@ namespace ProcessStartEventTest
             } catch(RiotSharpException e)
             {
                 Console.WriteLine(e);
+                FileWriter.WriteToFile("Not Ingame");
                 return -1;
-            }              
+            } catch(JsonSerializationException e)
+            {
+                Console.WriteLine(e);
+                FileWriter.WriteToFile("Unknown Gamemode");
+                return -2;
+            }            
         }
 
         public static void getData(int currenttry,int maxtries)
@@ -75,7 +108,7 @@ namespace ProcessStartEventTest
             } else
             {
                 Console.WriteLine("Max tries used, abort");
-                FileWriter.WriteToFile("Not Ingame");
+                
             }
             
         }
@@ -85,9 +118,12 @@ namespace ProcessStartEventTest
         private static bool isSoloQueue(GameQueueType type)
         {
             return
-                type == GameQueueType.RankedSolo5x5 || 
+                type == GameQueueType.RankedSolo5x5 ||
                 type == GameQueueType.RankedPremade5x5 ||
-                type == GameQueueType.TeamBuilderDraftRanked;
+                type == GameQueueType.RankedFlexSR ||
+                type == GameQueueType.RankedFlexTT ||
+                type == GameQueueType.TeamBuilderDraftRanked5x5 ||
+                type == GameQueueType.TeamBuilderRankedSolo;
         }
 
         private static bool isTeamRanked(GameQueueType type)

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RiotSharp.CurrentGameEndpoint;
 
-namespace ProcessStartEventTest
+namespace LoLCurrentMatchDetails
 {
     interface GameFetcher
     {

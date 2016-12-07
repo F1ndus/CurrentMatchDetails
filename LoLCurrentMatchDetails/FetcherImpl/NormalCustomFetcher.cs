@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RiotSharp.CurrentGameEndpoint;
-using RiotSharp.CurrentGameEndpoint.Converters;
+using RiotSharp.CurrentGameEndpoint.Enums;
 
-namespace ProcessStartEventTest
+namespace LoLCurrentMatchDetails
 {
     class NormalCustomFetcher : GameFetcher
     {

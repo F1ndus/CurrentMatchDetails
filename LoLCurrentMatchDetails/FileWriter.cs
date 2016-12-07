@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace ProcessStartEventTest
+namespace LoLCurrentMatchDetails
 {
     class FileWriter
     {
@@ -19,17 +19,11 @@ namespace ProcessStartEventTest
         public static void WriteToFile(string leaguename, string division, int points, int wins,int losses)
         {
             StreamWriter writer = new StreamWriter(@"E:\divisionranked");
-            string message = String.Format(@"{0} {1} [{2}] - {3}/{4}",leaguename,division,points,wins,losses);
+            string message = String.Format(@"{0} {1}{2}({3}LP) {4}W / {5}L",leaguename,division,Environment.NewLine,points,wins,losses);
             writer.Write(message);
             writer.Close();
         }
 
-        public static void WriteToFile(string teamname,string leaguename, string division, int points, int wins, int losses)
-        {
-            StreamWriter writer = new StreamWriter(@"E:\divisionranked");
-            string message = String.Format(@"{0}\n{1} {2} [{3}] - {4}/{5}", teamname,leaguename, division, points, wins, losses);
-            writer.Write(message);
-            writer.Close();
-        }
+        
     }
 }
