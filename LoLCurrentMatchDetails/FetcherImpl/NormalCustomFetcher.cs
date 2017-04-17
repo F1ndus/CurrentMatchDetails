@@ -10,10 +10,11 @@ namespace LoLCurrentMatchDetails
 {
     class NormalCustomFetcher : GameFetcher
     {
-        public void getQueueData(CurrentGame game, long summonerid)
+        public string getQueueData(CurrentGame game, long summonerid)
         {
             GameQueueType type = game.GameQueueType;
             FileWriter.WriteToFile(type.ToString());
+            return type.ToString();
         }
     }
 }

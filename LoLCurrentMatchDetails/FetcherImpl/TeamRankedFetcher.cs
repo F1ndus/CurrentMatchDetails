@@ -13,7 +13,7 @@ namespace LoLCurrentMatchDetails
 {
     class TeamRankedFetcher : GameFetcher
     {
-        public void getQueueData(CurrentGame game, long summonerid)
+        public string getQueueData(CurrentGame game, long summonerid)
         {
             List<Participant> participants = game.Participants;
             long teamId = participants.Find(x => x.SummonerId.Equals(summonerid)).TeamId;
@@ -65,12 +65,15 @@ namespace LoLCurrentMatchDetails
                         int points = entry.LeaguePoints;
                         int wins = entry.Wins;
                         int losses = entry.Losses;
-                        FileWriter.WriteToFile(String.Format("{0}{1}{2} {3} ({4}LP) {5}/{6}", name, Environment.NewLine, tier, division, points, wins, losses));
+                       return FileWriter.WriteToFile(String.Format("{0}{1}{2} {3} ({4}LP) {5}/{6}", name, Environment.NewLine, tier, division, points, wins, losses));
                 } catch(RiotSharpException e)
                 {
-                    FileWriter.WriteToFile(String.Format("{0}{1}{2} ({3}/{4})", name, Environment.NewLine, "Placements", details.Wins, details.Losses));
+                    return FileWriter.WriteToFile(String.Format("{0}{1}{2} ({3}/{4})", name, Environment.NewLine, "Placements", details.Wins, details.Losses));
                 }
                                                      
+            } else
+            {
+                return "meem";
             }
         }
     }

@@ -10,7 +10,7 @@ namespace LoLCurrentMatchDetails
 {
     class SoloQueueFetcher : GameFetcher
     {
-        public void getQueueData(CurrentGame game,long summonerid)
+        public string getQueueData(CurrentGame game,long summonerid)
         {
             Participant summoner = null;
             game.Participants.ForEach(user => {
@@ -37,11 +37,12 @@ namespace LoLCurrentMatchDetails
                 int losses = entry.Losses;
                 int points = entry.LeaguePoints;
                 string division = entry.Division;
-                FileWriter.WriteToFile(name, division, points, wins, losses);
+                return FileWriter.WriteToFile(name, division, points, wins, losses);
+
             } catch(Exception e)
             {
                 Console.WriteLine(e);
-                FileWriter.WriteToFile("Placements");
+                return FileWriter.WriteToFile("Placements");
             }
            
         }

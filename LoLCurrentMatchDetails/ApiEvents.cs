@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RiotSharp.CurrentGameEndpoint;
 
 namespace LoLCurrentMatchDetails
 {
-    interface GameFetcher
+    interface ApiEvents
     {
-        string getQueueData(CurrentGame game,long summonerid);
+        void onLeagueStarted();
+        void onLeagueStopped();
+        void onStartedUpdate();
+        void onFinishedUpdate(string data);
     }
 }

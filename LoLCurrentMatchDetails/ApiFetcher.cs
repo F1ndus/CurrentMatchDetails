@@ -19,6 +19,8 @@ namespace LoLCurrentMatchDetails
         // static int CURRENT_SUMMONER = LoLCurrentMatchDetails.Properties.Settings.Default.SummonerID;
         public static long CURRENT_SUMMONER = 0;
         static string api_key = null;
+        static ApiEvents eventtrigger;
+        public static List<long> favlist = new List<long>();
         // The folder for the roaming current user 
 
 
@@ -26,7 +28,12 @@ namespace LoLCurrentMatchDetails
         static string appFolder = Path.Combine(folder, "LoLCurrentMatchDetails");
         public static RiotApi api = null;
 
+        public static void registerEventHandler(ApiEvents eventhandler)
+        {
+            eventtrigger = eventhandler;
+        }
 
+      
         static ApiFetcher() {
             // Check if folder exists and if not, create it
             if (!Directory.Exists(appFolder))
@@ -43,6 +50,10 @@ namespace LoLCurrentMatchDetails
                     api_key = kv[1];
                 else if (kv[0].Equals("summonerid"))
                     CURRENT_SUMMONER = Convert.ToInt32(kv[1]);
+                else if(kv[0].Contains("fav"))
+                {
+                    favlist.Add(Convert.ToInt32(kv[1]));
+                }
             });
               api = RiotSharp.RiotApi.GetInstance(api_key);
         }
@@ -51,8 +62,10 @@ namespace LoLCurrentMatchDetails
 
         public static int getData()
         {
+            eventtrigger.onStartedUpdate();
             Properties.Settings.Default.Save();
             RiotSharp.CurrentGameEndpoint.CurrentGame gameinfo;
+            string retval = "error";
             try
             {
                 gameinfo = api.GetCurrentGame(Platform.EUW1, CURRENT_SUMMONER);
@@ -62,34 +75,47 @@ namespace LoLCurrentMatchDetails
                 {
                     Console.WriteLine("Teamranked");
                     GameFetcher fetcher = new TeamRankedFetcher();
-                    fetcher.getQueueData(gameinfo, CURRENT_SUMMONER);
+                   retval = fetcher.getQueueData(gameinfo, CURRENT_SUMMONER);
 
                 }
                 else if (isSoloQueue(qType))
                 {
                     Console.WriteLine("SoloQueue");
                     GameFetcher fetcher = new SoloQueueFetcher();
-                    fetcher.getQueueData(gameinfo, CURRENT_SUMMONER);
+                   retval = fetcher.getQueueData(gameinfo, CURRENT_SUMMONER);
 
                 }
                 else
                 {
                     Console.WriteLine("Normal or Custom");
                     GameFetcher fetcher = new NormalCustomFetcher();
-                    fetcher.getQueueData(gameinfo, CURRENT_SUMMONER);
+                    retval = fetcher.getQueueData(gameinfo, CURRENT_SUMMONER);
                 }
+                eventtrigger.onFinishedUpdate(retval);
                 return 0;
             } catch(RiotSharpException e)
             {
                 Console.WriteLine(e);
                 FileWriter.WriteToFile("Not Ingame");
+                eventtrigger.onFinishedUpdate("Not Ingame");
                 return -1;
             } catch(JsonSerializationException e)
             {
                 Console.WriteLine(e);
+                eventtrigger.onFinishedUpdate("Unknown Gamemode");
                 FileWriter.WriteToFile("Unknown Gamemode");
                 return -2;
             }            
+        }
+
+        public static long getSummonerID(string name)
+        {
+            return ApiFetcher.api.GetSummoner(Region.euw, name).Id;
+        }
+
+        public static string getSummonerName(long id)
+        {
+            return ApiFetcher.api.GetSummonerName(Region.euw, id).Name;
         }
 
         public static void getData(int currenttry,int maxtries)

@@ -19,7 +19,14 @@ namespace LoLCurrentMatchDetails
         public static System.Management.ManagementEventWatcher stopWatch;
 
         static void Main(string[] args)
-        {
+        {       
+            var thread = new Thread(() => {
+                Form1 form = new Form1();
+                ApiFetcher.registerEventHandler(form);
+                Application.Run(form);               
+            });        
+            thread.Start();
+            Thread.Sleep(2000);
 
             mgmtWtch = new System.Management.ManagementEventWatcher("Select * From Win32_ProcessStartTrace");
             mgmtWtch.EventArrived += new System.Management.EventArrivedEventHandler(mgmtWtch_EventArrived);
@@ -40,7 +47,12 @@ namespace LoLCurrentMatchDetails
         {
 
             PropertyData processName = e.NewEvent.Properties["ProcessName"];
-            string test = processName.Value.ToString();
+            string test = "nichts";
+            if (processName.Value.ToString() != null)
+            {
+                   test = processName.Value.ToString();
+            }
+             
             Console.WriteLine(test);
             if (test.Contains("League of Lege"))
             {
@@ -53,6 +65,7 @@ namespace LoLCurrentMatchDetails
                 {
                     Console.WriteLine("League of Legends stopped");
                     FileWriter.WriteToFile("Not Ingame");
+                    ApiFetcher.getData();
                 }
             }
         }

@@ -9,19 +9,21 @@ namespace LoLCurrentMatchDetails
 {
     class FileWriter
     {
-		public static void WriteToFile(string message)
+		public static string WriteToFile(string message)
         {
             StreamWriter writer = new StreamWriter(@"E:\divisionranked");
             writer.Write(message);
             writer.Close();
+            return message;
         }
 
-        public static void WriteToFile(string leaguename, string division, int points, int wins,int losses)
+        public static string WriteToFile(string leaguename, string division, int points, int wins,int losses)
         {
             StreamWriter writer = new StreamWriter(@"E:\divisionranked");
             string message = String.Format(@"{0} {1}{2}({3}LP) {4}W / {5}L",leaguename,division,Environment.NewLine,points,wins,losses);
             writer.Write(message);
             writer.Close();
+            return message;
         }
 
         
